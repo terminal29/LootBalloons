@@ -2,18 +2,18 @@ package com.terminal29;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PlayerJoinListener implements Listener {
+public class PlayerLeaveListener implements Listener {
 
     IPlayerOperator _callback;
 
-    PlayerJoinListener(IPlayerOperator callback){
+    PlayerLeaveListener(IPlayerOperator callback){
         _callback = callback;
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event)
+    public void onPlayerLeave(PlayerQuitEvent event)
     {
         _callback.call(event.getPlayer());
     }

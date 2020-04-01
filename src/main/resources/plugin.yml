@@ -6,3 +6,9 @@ prefix: LootBalloons
 authors: [terminal29]
 description: A Spigot/Paper plugin to add Animal Crossing loot balloons to Minecraft
 website: terminal29.com
+commands:
+  lootballoons:
+    description: List or run a LootBalloons command
+    usage: /lootballoons <command>
+    permission: lootballoons.list
+    permission-message: You don't have permission to run this command
