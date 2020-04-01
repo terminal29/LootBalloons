@@ -1,0 +1,8 @@
+name: LootBalloons
+version: @version@
+main: com.terminal29.LootBalloons
+api-version: 1.13
+prefix: LootBalloons
+authors: [terminal29]
+description: A Spigot/Paper plugin to add Animal Crossing loot balloons to Minecraft
+website: terminal29.com
