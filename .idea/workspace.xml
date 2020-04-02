@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="08fb806d-273d-486b-8cf7-640a2e726035" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/terminal29/BalloonEntityContainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/terminal29/BalloonEntityContainer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/terminal29/LootBalloons.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/terminal29/LootBalloons.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

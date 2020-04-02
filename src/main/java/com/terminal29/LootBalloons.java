@@ -81,13 +81,17 @@ public final class LootBalloons extends JavaPlugin {
 
         this.getCommand("lootballoons").setExecutor((sender, command, label, args) -> {
             if(args.length == 1 && args[0].equalsIgnoreCase("spawn")){
-                if(sender instanceof Player){
-                    Player player = ((Player)sender);
-                    Location location = player.getLocation();
-                    _spawnedBalloons.add(new BalloonEntityContainer(this, location, player.getWorld(), _balloonLoot));
-                    sender.sendMessage(String.format("Spawning loot balloon at %d %d %d", location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+                if(sender instanceof Player) {
+                    if (sender.hasPermission("lootballoons.spawn")) {
+                        Player player = ((Player) sender);
+                        Location location = player.getLocation();
+                        _spawnedBalloons.add(new BalloonEntityContainer(this, location, player.getWorld(), _balloonLoot));
+                        sender.sendMessage(String.format("Spawning loot balloon at %d %d %d", location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+                    } else {
+                        sender.sendMessage("Cannot spawn from command line");
+                    }
                 }else{
-                    sender.sendMessage("Cannot spawn from command line");
+                    sender.sendMessage("You do not have permission to run this command");
                 }
             }
             return true;
@@ -106,8 +110,8 @@ public final class LootBalloons extends JavaPlugin {
             @Override
             public void run() {
                 for(Player player : _connectedPlayers){
-                    if(r.nextDouble() <= _spawnChance)
-                        _spawnedBalloons.add(new BalloonEntityContainer(LootBalloons.this, player.getLocation(), player.getWorld(), _balloonLoot));
+                    if(r.nextDouble() <= _spawnChance && player.hasPermission("lootballons.randomspawn"))
+                            _spawnedBalloons.add(new BalloonEntityContainer(LootBalloons.this, player.getLocation(), player.getWorld(), _balloonLoot));
                 }
             }
         }, _spawnInterval, _spawnInterval); // Spawn one every 2 minutes
