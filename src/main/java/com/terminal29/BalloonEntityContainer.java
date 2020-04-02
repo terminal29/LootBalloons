@@ -1,5 +1,6 @@
 package com.terminal29;
 
+import javafx.util.Pair;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
@@ -23,7 +24,7 @@ public class BalloonEntityContainer {
     private static float _speed = 0.05f;
     static Random r = new Random();
     static boolean _hasRegisteredHandler = false;
-    static int _maxAliveTicks = 60*20; // 1 minute
+    static int _maxAliveTicks = 5*60*20; // auto remove after 5 minutes
 
     private double _randomAngle;
     private int _aliveTicks;
@@ -33,9 +34,9 @@ public class BalloonEntityContainer {
     private Location _startLocation;
     private Location _endLocation;
     private World _world;
-    private List<ItemStack> _drops;
+    private List<Pair<ItemStack, Pair<Integer, Integer>>> _drops;
 
-    public BalloonEntityContainer(Plugin plugin, Location centreLocation, World world, List<ItemStack> drops){
+    public BalloonEntityContainer(Plugin plugin, Location centreLocation, World world, List<Pair<ItemStack, Pair<Integer, Integer>>> drops){
         _plugin = plugin;
         _centreLocation = centreLocation;
         _world = world;
@@ -56,7 +57,7 @@ public class BalloonEntityContainer {
                             final int floorY = _world.getHighestBlockYAt(entity.getLocation());
                             final Location loc = entity.getLocation();
                             int fireworkCount = 5;
-                            int fireworkTickDelay = 2;
+                            int fireworkTickDelay = 4;
                             for(int i = 0; i < fireworkCount; i++){
                                 final int i2 = i;
                                 _plugin.getServer().getScheduler().runTaskLater(_plugin, () -> {
@@ -80,8 +81,13 @@ public class BalloonEntityContainer {
                                 Location spawnLocation = loc.clone();
                                 spawnLocation.setY(floorY+1);
 
-                                ItemStack stack = _drops.get(r.nextInt(_drops.size()));
-                                _world.dropItem(spawnLocation, stack);
+                                Pair<ItemStack, Pair<Integer, Integer>> stack = _drops.get(r.nextInt(_drops.size()));
+                                ItemStack dropStack = stack.getKey().clone();
+                                int min = stack.getValue().getKey();
+                                int max = stack.getValue().getValue();
+                                dropStack.setAmount(min+r.nextInt(max - min));
+
+                                _world.dropItem(spawnLocation, dropStack);
                             }, (fireworkCount+1)*(fireworkTickDelay));
                         }
                     }

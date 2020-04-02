@@ -1,0 +1,15 @@
+spawnInterval: 2400 # Ticks between when a loot balloon will attempt to spawn
+spawnChance: 0.5 # Chance a loot balloon will spawn every time spawnFrequency ticks over (0.0 no chance, 1.0 always)
+loot:
+  "minecraft:diamond":
+    max: 4
+    min: 1
+  "minecraft:coal":
+    max: 16
+    min: 8
+  "minecraft:iron_ingot":
+    max: 8
+    min: 2
+  "minecraft:gold_ingot":
+    max: 4
+    min: 2
