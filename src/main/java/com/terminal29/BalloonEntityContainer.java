@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.loot.LootTable;
 import org.bukkit.loot.LootTables;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -32,13 +33,15 @@ public class BalloonEntityContainer {
     private Location _startLocation;
     private Location _endLocation;
     private World _world;
+    private List<ItemStack> _drops;
 
-    public BalloonEntityContainer(Plugin plugin, Location centreLocation, World world){
+    public BalloonEntityContainer(Plugin plugin, Location centreLocation, World world, List<ItemStack> drops){
         _plugin = plugin;
         _centreLocation = centreLocation;
         _world = world;
         _randomAngle = r.nextInt(360);
         _aliveTicks = 0;
+        _drops = drops;
 
         if(!_hasRegisteredHandler){
             _hasRegisteredHandler = true;
@@ -50,19 +53,36 @@ public class BalloonEntityContainer {
                         List<MetadataValue> meta = entity.getMetadata("isBalloon");
                         if (!meta.isEmpty() && meta.get(0).asBoolean()) {
 
-                            Firework fw = (Firework) _world.spawnEntity(entity.getLocation(), EntityType.FIREWORK);
-                            FireworkMeta fwm = fw.getFireworkMeta();
+                            final int floorY = _world.getHighestBlockYAt(entity.getLocation());
+                            final Location loc = entity.getLocation();
+                            int fireworkCount = 5;
+                            int fireworkTickDelay = 2;
+                            for(int i = 0; i < fireworkCount; i++){
+                                final int i2 = i;
+                                _plugin.getServer().getScheduler().runTaskLater(_plugin, () -> {
 
-                            fwm.setPower(2);
-                            fwm.addEffect(FireworkEffect.builder().withColor(Color.RED).flicker(true).build());
-                            fwm.addEffect(FireworkEffect.builder().withColor(Color.WHITE).flicker(true).build());
+                                    Location fireworkLocation = loc.clone();
 
-                            fw.setFireworkMeta(fwm);
-                            fw.detonate();
+                                    fireworkLocation.setY((loc.getY() - (loc.getY()-floorY)*(i2/(double)fireworkCount)));
 
-                            ItemStack stack = new ItemStack(Material.DIAMOND);
-                            stack.setAmount(2 + r.nextInt(14));
-                            _world.dropItem(entity.getLocation(), stack);
+                                    Firework fw = (Firework) _world.spawnEntity(fireworkLocation, EntityType.FIREWORK);
+                                    FireworkMeta fwm = fw.getFireworkMeta();
+
+                                    fwm.setPower(2);
+                                    fwm.addEffect(FireworkEffect.builder().withColor(Color.RED).flicker(true).build());
+                                    fwm.addEffect(FireworkEffect.builder().withColor(Color.WHITE).flicker(true).build());
+
+                                    fw.setFireworkMeta(fwm);
+                                    fw.detonate();
+                                }, fireworkTickDelay*i);
+                            }
+                            _plugin.getServer().getScheduler().runTaskLater(_plugin, () -> {
+                                Location spawnLocation = loc.clone();
+                                spawnLocation.setY(floorY+1);
+
+                                ItemStack stack = _drops.get(r.nextInt(_drops.size()));
+                                _world.dropItem(spawnLocation, stack);
+                            }, (fireworkCount+1)*(fireworkTickDelay));
                         }
                     }
                 }
@@ -84,7 +104,6 @@ public class BalloonEntityContainer {
         sheepEntity.setColor(DyeColor.RED);
         sheepEntity.setLootTable(LootTables.EMPTY.getLootTable());
         sheepEntity.setHealth(0.5f);
-        sheepEntity.setArrowsStuck(r.nextInt(8));
         sheepEntity.setGravity(false);
 
         return balloonBase;
